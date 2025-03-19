@@ -28,7 +28,7 @@ For a connection to be establish, it is required to have following information
   * App Key, provided by GTN
   * App Secret, provided by GTN
   * Institution Code, provided by GTN
-  * Customer Number of the customer initiating the connection
+  * Customer Number of the customer initiating the connection. (Optional: only in the customer mode)
   * Private Key of the institution, provided by GTN
 
 ```python
@@ -49,16 +49,23 @@ For a connection to be establish, it is required to have following information
 authentication **status** is in the format
 ```json
     {
-        "http_code": 200, 
-        "status": "AUTH_SUCCESS"
+        "http_status": 200, 
+        "auth_status": "SUCCESS"
     }
 ```
 Once the _**gtnapi.init()**_ is success (i.e. <code>http_code == 200</code>), it is possible to access any REST endpoint (authorised to the customer) by using the SDK
 
 ### Getting customer details
 ```python
-    http_status, details = gtnapi.Requests.get('/trade/bo/v1.2.1/customer/account', customerNumber="12345678")
-    print(http_status, json.dumps(details, indent=4))
+    response = gtnapi.Requests.get('/trade/bo/v1.2.1/customer/account', customerNumber="12345678")
+    print(json.dumps(response, indent=4))
+```
+Response is in the format
+```python
+    {
+        "http_status" : 200,  # http status of the api call as per the API documentation
+        "response" : {data dict}  # response data of the api as per the API documentation
+    }
 ```
 ### Getting market data
 ```python
@@ -66,8 +73,8 @@ Once the _**gtnapi.init()**_ is success (i.e. <code>http_code == 200</code>), it
         "source-id": 'DFM',
         "keys": "DFM~EMAAR"
     }
-    http_status, details = gtnapi.Requests.get('/market-data/realtime/keys/data', **search_params)
-    print(http_status, json.dumps(details, indent=4))
+    response = gtnapi.Requests.get('/market-data/realtime/keys/data', **search_params)
+    print(json.dumps(response, indent=4))
 ``````
 ### Initiate the market data websocket connection
 Can initiate the WS session by passing call-back method references 

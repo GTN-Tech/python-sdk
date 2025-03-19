@@ -1,4 +1,4 @@
-from typing import Dict, Union, Callable
+from typing import Dict, Union, TypedDict
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -18,8 +18,8 @@ import binascii
 
 class Auth:
     class Statuses(Enum):
-        AUTH_SUCCESS = 'AUTH_SUCCESS'
-        AUTH_FAILED = 'AUTH_FAILED'
+        AUTH_SUCCESS = 'SUCCESS'
+        AUTH_FAILED = 'FAILED'
         ASSERTION_ERROR = 'ASSERTION_ERROR'
         SEVER_AUTH_FAILED = 'SEVER_AUTH_FAILED'
         CUSTOMER_AUTH_FAILED = 'CUSTOMER_AUTH_FAILED'
@@ -27,7 +27,7 @@ class Auth:
         SERVER_TOKEN_RENEW_FAILED = 'SERVER_TOKEN_RENEW_FAILED'
         CUSTOMER_TOKEN_RENEWED = 'CUSTOMER_TOKEN_RENEWED'
         CUSTOMER_TOKEN_RENEW_FAILED = 'CUSTOMER_TOKEN_RENEWED_FAILED'
-        AUTH_EXPIRED = 'AUTH_EXPIRED'
+        AUTH_EXPIRED = 'TOKEN_EXPIRED'
 
     @classmethod
     def init(cls):
@@ -70,7 +70,7 @@ class Auth:
             if status == 200:
                 status = -1
 
-        return {'http_code': status, 'status': token_status}
+        return cls.__return(status, token_status)
 
     @classmethod
     def init_institution(cls):
@@ -90,10 +90,11 @@ class Auth:
         cls._basic_auth = cls._get_basic_auth(gtnapi.get_app_key(), gtnapi.get_app_secret())
 
         # create the assertion
-        _assertion = cls._create_token(gtnapi.get_private_key(), gtnapi.get_app_key(), gtnapi.get_institution())
+        _assertion = cls._create_token(gtnapi.get_private_key(), gtnapi.get_app_key(),
+                                       gtnapi.get_institution(), gtnapi.get_user_id())
         if _assertion is None:
             cls.logger.error('Assertion created failed')
-            return {'http_code': -1, 'status': gtnapi.Auth.Statuses.ASSERTION_ERROR.value}
+            return cls.__return(-1,  gtnapi.Auth.Statuses.ASSERTION_ERROR.value)
 
         gtnapi.set_assertion(_assertion)
         cls.logger.info('Assertion created successfully')
@@ -138,7 +139,8 @@ class Auth:
             if status == 200:
                 status = -1
 
-        return {'http_code': status, 'status': token_status}
+        # return {'http_code': status, 'status': token_status}
+        return cls.__return(status, token_status)
 
     @classmethod
     def __logout(cls):
@@ -172,7 +174,7 @@ class Auth:
                 cls.logger.debug('Refresh customer token failed')
 
     @classmethod
-    def _create_token(cls, private_key, app_key, institution) -> Union[Dict, None]:
+    def _create_token(cls, private_key, app_key, institution, user_id) -> Union[Dict, None]:
         """
         Create the JWT token
         :param private_key: private key of the institute
@@ -196,7 +198,7 @@ class Auth:
                         "iss": app_key,
                         "instCode": institution,
                         "exp": expire_time,
-                        "userId": '11111',
+                        "userId": user_id,
                         "iat": issued_time
                     },
                     private_key,
@@ -375,7 +377,7 @@ class Auth:
                     # check the refresh token validity first
                     expire_time = datetime.datetime.fromtimestamp(int(token['refreshTokenExpiresAt']) / 1000)
                     delta = (expire_time - datetime.datetime.now()).total_seconds()
-                    cls.logger.debug(f'Time delta - server refresh token:  {delta}')
+                    cls.logger.debug(f'Time delta - server refresh token:  {delta}s')
                     if delta < 50:
                         # refresh token no longer valid. must logout
                         cls._shut_down()
@@ -481,3 +483,10 @@ class Auth:
         except Exception as e:
             cls.logger.exception(f"Error obtaining hashPassword: {e}")
             return None
+
+    @classmethod
+    def __return(cls, status: int, response: Union[dict, str]) -> TypedDict('response', {'http_status': int, 'auth_status': Union[str, dict]}):
+        return {
+            "http_status": status,
+            "auth_status": response
+        }

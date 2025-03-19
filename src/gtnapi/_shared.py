@@ -1,8 +1,10 @@
+import datetime
+
 class Shared:
 
     @classmethod
     def init(cls, api_url, app_key: str, app_secret: str, private_key: str,
-             institution: str, customer_number: str, user: str, password: str):
+             institution: str, customer_number: str, user: str, password: str, user_id: str):
         cls._api_url = api_url
         cls._app_key = app_key
         cls._app_secret = app_secret
@@ -13,6 +15,7 @@ class Shared:
         cls._server_token = None
         cls._user = user
         cls._password = password
+        cls.user_id = user_id
         cls._ready = True
 
     @classmethod
@@ -44,12 +47,32 @@ class Shared:
         return cls._server_token
 
     @classmethod
+    def get_server_token_expire_time(cls):
+        """
+        :return: the server token expire time in seconds
+        """
+        token = cls.get_server_token()
+        # expire time in seconds
+        expire_time = datetime.datetime.fromtimestamp(int(token['refreshTokenExpiresAt']) / 1000)
+        return expire_time
+
+    @classmethod
     def set_customer_token(cls, customer_token):
         cls._customer_token = customer_token
 
     @classmethod
     def get_customer_token(cls):
         return cls._customer_token
+
+    @classmethod
+    def get_customer_token_expire_time(cls):
+        """
+        :return: the server token expire time in seconds
+        """
+        token = cls.get_customer_token()
+        # expire time in seconds
+        expire_time = datetime.datetime.fromtimestamp(int(token['refreshTokenExpiresAt']) / 1000)
+        return expire_time
 
     @classmethod
     def get_api_url(cls):
@@ -90,3 +113,7 @@ class Shared:
     @classmethod
     def get_password(cls):
         return cls._password
+
+    @classmethod
+    def get_user_id(cls):
+        return cls.user_id

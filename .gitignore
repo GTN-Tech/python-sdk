@@ -3,3 +3,4 @@
 **/dist
 **/gtnapi.egg-info
 **/__pycache__
+/src/test/

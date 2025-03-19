@@ -11,7 +11,7 @@ shared: Shared
 def init(api_url: str, institution: str, app_key: str,
          app_secret: str = None, private_key: str = None,
          customer_number: str = None,
-         user: str = None, password: str = None):
+         user: str = None, password: str = None, user_id: str = '1234'):
     """
     :param api_url: url of the api service
     :param app_key: app key of the institution
@@ -20,11 +20,12 @@ def init(api_url: str, institution: str, app_key: str,
     :param institution: institution code
     :param customer_number: optional customer number. not required for the institution mode
     :param user: user name in user/pass mode
+    :param user_id: user id tome associated with the institution / customer tokens
     :param password: password name in user/pass mode
     """
     global shared
     shared = Shared
-    shared.init(api_url, app_key, app_secret, private_key, institution, customer_number, user, password)
+    shared.init(api_url, app_key, app_secret, private_key, institution, customer_number, user, password, user_id)
     # key_rot._init()
     return Auth.init()
 
@@ -118,6 +119,13 @@ def get_password():
     :return: the password
     """
     return shared.get_password()
+
+
+def get_user_id():
+    """
+    :return: the password
+    """
+    return shared.get_user_id()
 
 @property
 def access_token():
