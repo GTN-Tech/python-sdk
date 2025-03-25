@@ -455,10 +455,6 @@ class Auth:
         cls.logger.debug('Refresh', token['refreshToken'])
         cls.logger.debug("Refresh expire", datetime.datetime.fromtimestamp(int(token['refreshTokenExpiresAt']) / 1000))
 
-        # print("------ customer details ------")
-        # status, details = gtnapi.Customer.get_details('949316473')
-        # print(json.dumps(details, indent=4))
-
     @classmethod
     def _shut_down(cls):
         """

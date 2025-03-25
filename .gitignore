@@ -1,6 +1,6 @@
 **/.idea
 **/venv
 **/dist
-**/gtnapi.egg-info
+**/gtn_embed_sdk.egg-info
 **/__pycache__
 /src/test/

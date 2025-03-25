@@ -1,16 +1,16 @@
-## Python SDK for GTN API
+## Python SDK for GTN Embed
 <img src="https://img.shields.io/badge/Python-3.10 -- 3.12-green"/>
 
-This is a lightweight SDK which wraps the REST APIs of the GTN API set as documented in the [API Portal](https://developer.globaltradingnetwork.com/rest-api-reference)
+This is a lightweight SDK which wraps the REST APIs of the GTN Embed set as documented in the [API Portal](https://developer.globaltradingnetwork.com/rest-api-reference)
 
 ### installing packages
-The GTN SDK is available on PYPI. Install with pip:<br>
+The GTN Embed SDK is available on PYPI. Install with pip:<br>
 ```bash
-    pip install gtnapi
+    pip install gtn-embed-sdk
 ```
 
 ### API Authentication
-The GTN API uses the notion of Institutions, which represent customers that build their platform upon the GTN API. 
+The GTN Embed uses the notion of Institutions, which represent customers that build their platform upon the GTN Embed. 
 The end-users of the institution, are referred to as customers. 
 An institution is able to manage their customers directly and is also able to initiate actions on the user's behalf.
 
@@ -19,7 +19,7 @@ first to the Institution and then as a customer. And resulting keys expire in a 
 renewing using authentication APIs. However when using the SDK, key renewing is not required since it is 
 handled by the SDK in background.
 
-The <code>api_url</code> is the API hub where customers are connected to access the GTN API. This URL can change depending on 
+The <code>api_url</code> is the API hub where customers are connected to access the GTN Embed. This URL can change depending on 
 customer's registered country.
 
 #### Initiating API connection
@@ -87,7 +87,7 @@ can close the WS session by calling
     gtnapi.Streaming.MarketData.disconnect()
 ```
 ### terminate the session
-The while GT API session will be terminated by calling the following
+The while GTN Embed session will be terminated by calling the following
 ```python
     gtnapi.stop()
 ```

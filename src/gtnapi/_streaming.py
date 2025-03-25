@@ -26,7 +26,7 @@ class Streaming:
             cls.__on_error = on_error
             cls.__on_close = on_close
             websocket.enableTrace(False)
-            cls.__ws = websocket.WebSocketApp('wss' + gtnapi.get_api_url()[5:] + "/market-data/websocket/price",
+            cls.__ws = websocket.WebSocketApp('wss' + gtnapi.get_api_url()[5:] + "/market-data/websocket/price?" + "throttle-key=" + gtnapi.get_app_key(),
                                               on_open=cls.on_open,
                                               on_message=cls.on_message,
                                               on_error=cls.on_error,
@@ -135,7 +135,7 @@ class Streaming:
             cls.__on_error = on_error
             cls.__on_close = on_close
             websocket.enableTrace(False)
-            cls.__ws = websocket.WebSocketApp('wss' + gtnapi.get_api_url()[5:] + "/trade/websocket/v1.2.1",
+            cls.__ws = websocket.WebSocketApp('wss' + gtnapi.get_api_url()[5:] + "/trade/websocket/v1.2.1?" + "throttle-key=" + gtnapi.get_app_key(),
                                               on_open=cls.on_open,
                                               on_message=cls.on_message,
                                               on_error=cls.on_error,
@@ -174,7 +174,6 @@ class Streaming:
             :param ws: web socket reference
             """
             ws.send(f'{{ "token": {gtnapi.get_token()["accessToken"]} }}')
-            print('{ "token": "' + gtnapi.get_customer_token()["accessToken"] + '"}')
             cls.__on_open()
 
         @classmethod
