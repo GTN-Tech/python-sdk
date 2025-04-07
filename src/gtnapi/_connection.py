@@ -3,6 +3,8 @@ import json
 import requests
 from urllib.parse import urlencode
 
+import gtnapi
+
 
 class Connection:
     """
@@ -17,10 +19,10 @@ class Connection:
         self.http_session.keep_alive = False
         if auth_token:
             self.http_session.headers.update(
-                {'Authorization': auth_token, 'Throttle-Key': throttle_key, 'Content-Type': 'application/json'})
+                {'User-Agent': f'GTN-SDK-Python/{gtnapi.version()}', 'Authorization': auth_token, 'Throttle-Key': throttle_key, 'Content-Type': 'application/json'})
         else:
             self.http_session.headers.update(
-                {'Throttle-Key': throttle_key, 'Content-Type': 'application/json'})
+                {'User-Agent': f'GTN-SDK-Python/{gtnapi.version()}', 'Throttle-Key': throttle_key, 'Content-Type': 'application/json'})
 
     def open_post(self, data):
         """

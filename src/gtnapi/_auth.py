@@ -1,19 +1,19 @@
+import base64
+import binascii
+import datetime
+import hashlib
+import json
+import logging
+import threading
+from enum import Enum
 from typing import Dict, Union, TypedDict
 
+import jwt
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-import jwt
-import json
-from enum import Enum
 
-import base64
-import datetime, time
-from gtnapi._connection import Connection
 import gtnapi
-import threading
-import logging
-import hashlib
-import binascii
+from gtnapi._connection import Connection
 
 
 class Auth:
@@ -94,7 +94,7 @@ class Auth:
                                        gtnapi.get_institution(), gtnapi.get_user_id())
         if _assertion is None:
             cls.logger.error('Assertion created failed')
-            return cls.__return(-1,  gtnapi.Auth.Statuses.ASSERTION_ERROR.value)
+            return cls.__return(-1, gtnapi.Auth.Statuses.ASSERTION_ERROR.value)
 
         gtnapi.set_assertion(_assertion)
         cls.logger.info('Assertion created successfully')
@@ -429,7 +429,8 @@ class Auth:
             except Exception as e:
                 cls.logger.exception(e)
 
-            time.sleep(10)
+            cls.e = threading.Event()
+            cls.e.wait(timeout=10)
 
         cls.logger.debug('Key rotation thread exit!')
 
@@ -460,6 +461,7 @@ class Auth:
         """
         stop the refresh thread
         """
+        cls.e.set()
         cls.__logout()
         cls.__thread_active = False
         cls.logger.info('GTN API session terminated')

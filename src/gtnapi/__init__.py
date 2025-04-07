@@ -4,8 +4,12 @@ from gtnapi._shared import Shared as Shared
 from gtnapi._auth import Auth as Auth
 from gtnapi._streaming import Streaming as Streaming
 from gtnapi._requests import Requests as Requests
+from pathlib import Path
+import toml
 
 shared: Shared
+toml_version = "unknown"
+
 
 
 def init(api_url: str, institution: str, app_key: str,
@@ -23,12 +27,35 @@ def init(api_url: str, institution: str, app_key: str,
     :param user_id: user id tome associated with the institution / customer tokens
     :param password: password name in user/pass mode
     """
+
+    # read the package version first
+    __version()
+
     global shared
     shared = Shared
     shared.init(api_url, app_key, app_secret, private_key, institution, customer_number, user, password, user_id)
     # key_rot._init()
     return Auth.init()
 
+
+def __version():
+    try:
+        global toml_version
+        toml_version = "unknown"
+        # adopt path to your pyproject.toml
+        pyproject_toml_file = Path(__file__).parent.parent.parent / "pyproject.toml"
+        if pyproject_toml_file.exists() and pyproject_toml_file.is_file():
+            data = toml.load(pyproject_toml_file)
+            # check project.version
+            if "project" in data and "version" in data["project"]:
+                toml_version = data["project"]["version"]
+        shared.set_version(toml_version)
+    except:
+        pass
+
+
+def version():
+    return toml_version
 
 def get_api_url():
     """
@@ -189,5 +216,7 @@ def stop():
     APIs are not accessible after this
     """
     Auth._shut_down()
+    if Streaming.TradeData.active():
+        Streaming.TradeData.disconnect()
     if Streaming.MarketData.active():
         Streaming.MarketData.disconnect()

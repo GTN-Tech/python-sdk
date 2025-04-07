@@ -4,15 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gtn-embed-sdk"
-version = "0.0.9"
+version = "1.0.0"
 description = "Python Software Developement Kit for GTN Fintech API"
 dependencies = [
     "requests",
     "cryptography",
     "PyJWT",
-    "websocket-client"
+    "websocket-client",
+    "toml"
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [
     { name = "Uditha Nagahawatta", email = "n.uditha@gtngroup.com" },
 ]
@@ -22,9 +23,7 @@ maintainers = [
 readme = "README.md"
 license-files = ["LICENSE"]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",

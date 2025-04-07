@@ -117,3 +117,11 @@ class Shared:
     @classmethod
     def get_user_id(cls):
         return cls.user_id
+
+    @classmethod
+    def set_version(cls, version):
+        cls._version = version
+
+    @classmethod
+    def get_version(cls):
+        return cls._version
